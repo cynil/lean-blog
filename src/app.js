@@ -1,4 +1,4 @@
-var leanBlog = angular.module('leanBlog', ['ngRoute', 'leanDB'])
+var leanBlog = angular.module('leanBlog', ['ngRoute', 'leanDB', 'leanBlog.directives'])
 
 leanBlog.config(function($routeProvider){
     $routeProvider
@@ -8,27 +8,70 @@ leanBlog.config(function($routeProvider){
         controller: 'MainController',
         resolve: {
             articles: function(leanDB){
-                return leanDB.query('select title,time from Article', [])
+
+                //return leanDB.query('select title,time from Article')
+
+                return [
+                    {
+                        id: '00001',
+                        title: 'sass语法速记',
+                        time: new Date('2011/3/21')
+                    },
+                    {
+                        id: '00002',
+                        title: '深入作用域与闭包',
+                        time: new Date('2011/5/1')
+                    },                    
+                    {
+                        id: '00003',
+                        title: '简单理解jsonp',
+                        time: new Date('2011/2/13')
+                    },
+                    {
+                        id: '00004',
+                        title: 'setTimeout(fn(){},0)的妙用',
+                        time: new Date('2011/5/9')
+                    }
+                ]
+
             }
         }
     })
 
     .when('/articles/:id', {
-        controller: 'DetailController',
+        controller: 'ArticleDetailController',
         templateUrl: 'templates/article-detail.tmpl.html',
         resolve: {
             article: function(leanDB, $route){
-                var aid = $route.current.params.id
-                var cql = 'select * from Article where objectId = "' + aid + '"'
-                return leanDB.query(cql, [])
+                var aid = $route.current.params.id,
+                    cql = 'select * from Article where objectId = "' + aid + '"'
+
+                //return leanDB.query(cql)
+
+                return [{
+                        id: '00004',
+                        title: 'setTimeout(fn(){},0)的妙用',
+                        time: new Date('2011/5/9'),
+                        content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur beatae nesciunt voluptates, voluptas cumque reiciendis quidem cum, eligendi officiis eos, a ratione sint, nemo accusantium omnis aperiam corporis. Repellendus, ad nulla odio sapiente maiores perferendis aspernatur aperiam nobis voluptates quasi adipisci id eius omnis quae in officiis dolore explicabo perspiciatis nesciunt delectus alias, qui? Ea veritatis deserunt, excepturi atque, modi, eaque impedit perspiciatis saepe eum voluptas minus maiores dignissimos.'
+                    }]
             }
         }
     })
 /*
-    .when('/articles/new', {
+    .when('/admin', {
         templateUrl: 'templates/article-new.tmpl.html',
-        controller: 'NewController'
+        controller: 'AdminController'
     })
+    
+    .when('/admin/new', {
+        templateUrl: '',
+        controller:
+    })
+
+    .otherwise({
+        redirectTo: '/'
+    })
+
 */
 
 })
@@ -38,20 +81,20 @@ leanBlog.controller('MainController', function($scope, articles){
 })
 
 
-leanBlog.controller('DetailController', function($scope, $routeParams, article){
+leanBlog.controller('ArticleDetailController', function($scope, $routeParams, article){
 
     $scope.aid = $routeParams.id
-
-    console.log($scope.aid)
 
     $scope.article = article[0]
 })
 
-leanBlog.controller('CommentController', function($scope, leanDB, $route){
+//记得改回来----------->
+leanBlog.controller('CommentController', function($scope, leanDB, $route){})
+leanBlog.controller('commentController', function($scope, leanDB, $route){
 
-    var cql = 'select * from Comment where targetArticle = pointer("Article", "' + $scope.$parent.aid + '")'
+    var cql = 'select * from Comment where targetArticle = "' + $scope.$parent.aid + '"'
 
-    leanDB.query(cql,[]).then(function(comments){
+    leanDB.query(cql).then(function(comments){
 
         $scope.comments = comments.sort(function(a, b){
             return b.time - a.time
@@ -69,11 +112,9 @@ leanBlog.controller('CommentController', function($scope, leanDB, $route){
 
         //我从未见过有如此不堪入目之代码！！（+正义之凝视）
         var cql = 'insert into Comment(targetArticle,content,time)' + 
-                  ' values(pointer("Article","' + aid +'"), "' + content +'", date("' + date.toJSON() +'"))'
+                  ' values("' + aid +'", "' + content +'", date("' + date.toJSON() +'"))'
 
-        //var pvalues = [$scope.newComment.content, 'date(' + new Date().toJSON() + ')']
-
-        leanDB.query(cql, []).then(function(data){
+        leanDB.query(cql).then(function(data){
             
             //insert仅仅返回id
             $scope.comments.unshift({
@@ -85,7 +126,9 @@ leanBlog.controller('CommentController', function($scope, leanDB, $route){
             $scope.newComment.content = ''
 
         }, function(err){
+
             console.log(err)
+
         })
 
     }
@@ -98,13 +141,10 @@ leanblog.controller('NewArticleController', function($scope, leanDB){
 
 })
 
-leanblog.controller('RegisterAndLoginController', function($scope, leanDB, currentUser){
+leanblog.controller('AdminController', function($scope, leanDB){
 
-    AV.User.logIn($scope.email, $scope.password).then(function(loginedUser){
-        currentUser.set(loginedUser)
+    leanDB.login($scope.email, $scope.password).then(function(loginedUser){
+
     })
-
-
-
 })
 */
