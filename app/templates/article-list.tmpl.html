@@ -1,0 +1,21 @@
+<div  lean-animate="pull-in" class="article-list">
+    
+    <h3 ng-if="currentTag != undefined">标签：{{currentTag}}</h3>
+
+    <p class="page-indicator">{{currentPage}}/{{totalPages}}</p>
+    <ul>
+        <li class="article-item" ng-repeat="article in articles">
+            <h3 class="article-title">
+                <a ng-href="#/articles/{{article.id}}">{{article.title}}</a>
+            </h3>
+            <small ng-if="!!article.tags" class="article-tag">
+                <img src="./images/tag.png">
+                <span class="article-tag-item" ng-repeat="tag in article.tags">
+                    <a ng-href="#/tag/{{tag}}">{{tag}}</a>
+                </span>
+            </small>
+            <small class="timestamp">{{article.time | date:'yyyy/MM/dd HH:mm:ss.sss'}}</small>
+        </li>
+    </ul>
+    <load completed="nomore" pending="loading" onloadmore="next()"></load>
+</div>

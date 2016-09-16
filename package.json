@@ -1,0 +1,26 @@
+{
+  "name": "cyni-blog",
+  "version": "1.0.0",
+  "description": "my blog, build with angular leancloud and gulp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cynil/lean-blog.git"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "cynii",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cynil/lean-blog/issues"
+  },
+  "homepage": "https://github.com/cynil/lean-blog#readme",
+  "devDependencies": {
+    "browser-sync": "^2.16.0",
+    "gulp": "^3.9.1"
+  }
+}

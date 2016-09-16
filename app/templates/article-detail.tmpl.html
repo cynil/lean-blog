@@ -1,0 +1,44 @@
+<article lean-animate="swipeleft">
+
+    <h3 class="article-title">{{article.title}}</h3>
+    <small ng-if="!!article.tags" class="article-tag">
+        <img src="./images/tag.png">
+        <span class="article-tag-item" ng-repeat="tag in article.tags">
+            <a ng-href="#/tag/{{tag}}">{{tag}}</a>
+        </span>
+    </small>
+    <small class="timestamp">{{article.time | date:'yyyy/MM/dd HH:mm:ss.sss'}}</small>
+
+    <p ng-if="!!logined"><a ng-href="#/edit/{{article.id}}">编辑</a></p>
+
+    <div class="article-content" ng-bind-html="article.content"></div>
+
+    <div class="article-comment" ng-controller="CommentController">
+        
+        <form ng-submit="addComment()">
+            <h3>评论区</h3>
+            <textarea name="newc" ng-model="newComment.content" placeholder="留言，支持markdown语法" required></textarea>
+            <input type="text" ng-model="newComment.name" placeholder="留名">
+            <input type="text" ng-model="newComment.website" placeholder="留地址">
+            <input type="submit" value="加上去">
+        </form>
+
+        <div class="article-comment-list">
+            <h3>已有评论</h3>
+            <ol>
+                <li class="comment-item" ng-repeat="comment in comments" lean-animate="dropdown">
+                    <div class="comment-avatar">
+                        <span>{{comment.name | limitTo:1}}</span>
+                    </div>
+                    <div class="comment-detail">
+                        <p class="comment-author">
+                            <a ng-href="{{comment.website}}">{{comment.name}}</a>
+                            <small class="timestamp">{{comment.time | date:'yyyy/MM/dd HH:mm:ss.sss'}}</small>
+                        </p>
+                        <div class="comment-content" ng-bind-html="marked(comment.content)"></div>
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </div>
+</article>
